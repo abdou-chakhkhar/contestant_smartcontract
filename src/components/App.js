@@ -8,14 +8,13 @@ const App = () => {
   const [account, setAccount] = useState('0x0')
   const [contest, setContest] = useState({})
   const [contestants, setContestants] = useState([])
+  const [constantsNumber, setConstantsNumber] = useState(0)
 
 
   useEffect(() => {
     loadWeb3()
     loadBlockchainData()
-    console.log("account", account);
-    console.log("contest", contest);
-  }, [])
+  }, [loadWeb3, loadBlockchainData])
 
 
 
@@ -48,11 +47,11 @@ const App = () => {
       setContest(contest )
     
       let contestantsCount = await contest.methods.contestantsCount().call();
+      setConstantsNumber(contestantsCount);
       let contestant1 = await contest.methods.contestants(1).call();
       let contestant2 = await contest.methods.contestants(2).call();
 
       setContestants([...contestants, contestant1.name, contestant2.name])
-
 
 
 
@@ -67,9 +66,43 @@ const App = () => {
 
   return (
     <div>
-      <p>your current account: {account}</p>
-      <h5>contestants:</h5>
-      {contestants.map(contestant => <p>{contestant}</p>)}
+      {/* <label className="float-left">your current account:<b>{account}</b></label> */}
+
+
+      <div className="card mb-4">
+        <div className="card-body">
+
+          <table className="table table-borderless text-muted text-center">
+            <thead>
+              <tr>
+                <th scope="col ">Contestant ({constantsNumber})</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contestants.map(contestant => <tr>{contestant}</tr>)}
+            </tbody>
+          </table>
+
+          <form className="mb-3" onSubmit={(event) => {
+                event.preventDefault()
+                let amount
+                amount = window.web3.utils.toWei(amount, 'Ether')
+              }}>
+              <div>
+                <label className="float-left"><b>Select Contestant</b></label>
+                <select>
+                  <option>Tom</option>
+                  <option>Jerry</option>
+                </select>
+              </div>
+
+              <button type="submit" className="btn btn-primary btn-block btn-sm">Vote</button>
+            </form>
+
+
+        </div>
+      </div>
+
   </div>
   )
 }
